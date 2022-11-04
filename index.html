@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title> JsPsych </title>
+    <script src="https://unpkg.com/jspsych@7.3.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.1"></script>
+    <script src="list1.js"> </script>
+    <script src="list2.js"> </script>
+    <script src="practice.js"> </script>
+</script>
+    
+<link href="https://unpkg.com/jspsych@7.3.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<script> var jsPsych = initJsPsych({
+        on_finish: function() {  jsPsych.data.displayData(); }});
+    
+    var subject_id = Math.floor(Math.random()*100000);
+
+    var preload = {
+        type: jsPsychPreload,
+        images: imagelist,
+        show_progress_bar: true,
+        data: {
+        typeoftrial: 'preload',
+        subject: subject_id }};
+    
+
+    var fixation1 = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<p style="font-size: 48px;">+</p>',
+        choices:"NO_KEYS",
+        trial_duration: 1000,
+        data: {
+            typeoftrial: 'fixation',
+            list_number: jsPsych.timelineVariable('List'),
+            trialcondition: jsPsych.timelineVariable('condition'),
+            subject: subject_id}}
+          
+
+    var sentence ={
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('sentence'),
+        choices: " ",
+        data: {
+            typeoftrial: 'fixation',
+            list_number: jsPsych.timelineVariable('List'),
+            trialcondition: jsPsych.timelineVariable('condition'),
+            subject: subject_id}}
+          
+
+    var fixation2 = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<p style="font-size: 48px;">+</p>',
+        choices:"NO_KEYS",
+        trial_duration: 500,
+        data: {
+            typeoftrial: 'fixation',
+            list_number: jsPsych.timelineVariable('List'),
+            trialcondition: jsPsych.timelineVariable('condition'),
+            subject: subject_id}}
+          
+
+    var picture = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('pic'),
+        choices: ['S','N','s','n'],
+        data: {
+            typeoftrial: 'fixation',
+            list_number: jsPsych.timelineVariable('List'),
+            trialcondition: jsPsych.timelineVariable('condition'),
+            subject: subject_id},
+            on_finish: function(data){
+                if(jsPsych.pluginAPI.compareKeys(data.response, jsPsych.timelineVariable('correct'))){
+                data.correct = true;}
+                else {data.correct = false;}}}
+
+    var feedback = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: function(){
+        var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+        if(last_trial_correct){return "CORRECT!"; }
+        else {return "WRONG!";}},
+        choices : "NO_KEYS",
+        trial_duration: 2000}
+
+    var instructions = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'On each trial, you will be shown a sentence. 
+            Press the space bar to continue after comprehending the sentence.
+            You will then be shown a picture of an object and will be asked to decide 
+            if the displayed object was mentioned in the sentence or not.
+            Respond as quickly as possible by pressing S for yes and N for no.
+            You will now do a practice session with feedback. Press any key to continue'}
+                
+    var practice_procedure = {
+        timeline: [fixation1, sentence, fixation2, picture, feedback],
+        timeline_variables: practice
+        randomize_order: true};
+
+                
+    var move_to_experiment = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: 'The practice session is now over. Please press any key to start the experiment'}
+                     
+    var end_experiment = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: 'Thank you for participating! Press any key to end the experiment.',
+        data: {
+            typeoftrial: 'sentence',
+            list_number: jsPsych.timelineVariable('List'),
+            trialcondition: jsPsych.timelineVariable('condition'),
+            subject: subject_id}}
+                
+    var list = [1,2]
+                
+    var CONDITION = list [Math.floor(Math.random()*list.length)];
+                
+    var teststimuli =[]
+            if(CONDITION==1){teststimuli = list1}
+            else {teststimuli = list2}
+                
+    console.log("list=",list)
+    console.log("CONDITION=", CONDITION)
+    console.log("teststimuli=", teststimuli)
+                
+    var experiment_procedure = {
+            timeline: [fixation1, sentence, fixation2, picture],
+            timeline_variables: teststimuli,
+            randomize_order: true};
+                
+ jsPsych.run([preload, instructions, practice_procedure, move_to_experiment, experiment_procedure, end_experiment])
+          
+
+</script>
+</body>
+</html>

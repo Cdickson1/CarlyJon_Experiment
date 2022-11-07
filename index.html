@@ -10,6 +10,7 @@
     <script src="list1.js"> </script>
     <script src="list2.js"> </script>
     <script src="practice.js"> </script>
+    <script src="images.js"> </script>
 </script>
     
 <link href="https://unpkg.com/jspsych@7.3.0/css/jspsych.css" rel="stylesheet" type="text/css" />
@@ -20,13 +21,13 @@
     
     var subject_id = Math.floor(Math.random()*100000);
 
-    var preload = {
-        type: jsPsychPreload,
-        images: imagelist,
-        show_progress_bar: true,
-        data: {
-        typeoftrial: 'preload',
-        subject: subject_id }};
+    //var preload = {
+        //type: jsPsychPreload,
+        //images: imagelist,
+       // show_progress_bar: true,
+        //data: {
+        //typeoftrial: 'preload',
+        //subject: subject_id }};
     
 
     var fixation1 = {
@@ -67,7 +68,7 @@
     var picture = {
         type: jsPsychImageKeyboardResponse,
         stimulus: jsPsych.timelineVariable('pic'),
-        choices: ['S','N','s','n'],
+        choices: ['Y','N','y','n'],
         data: {
             typeoftrial: 'fixation',
             list_number: jsPsych.timelineVariable('List'),
@@ -88,17 +89,13 @@
         trial_duration: 2000}
 
     var instructions = {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: 'On each trial, you will be shown a sentence. 
-            Press the space bar to continue after comprehending the sentence.
-            You will then be shown a picture of an object and will be asked to decide 
-            if the displayed object was mentioned in the sentence or not.
-            Respond as quickly as possible by pressing S for yes and N for no.
-            You will now do a practice session with feedback. Press any key to continue'}
-                
+        type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'On each trial, you will be shown a sentence. Press the space bar to continue after comprehending the sentence. You will then be shown a picture of an object and will be asked to decide if the displayed object was mentioned in the sentence or not. Respond as quickly as possible by pressing S for yes and N for no.You will now do a practice session with feedback. Press any key to continue'
+            }
+            
     var practice_procedure = {
         timeline: [fixation1, sentence, fixation2, picture, feedback],
-        timeline_variables: practice
+        timeline_variables: practice,
         randomize_order: true};
 
                 
@@ -132,7 +129,7 @@
             timeline_variables: teststimuli,
             randomize_order: true};
                 
- jsPsych.run([preload, instructions, practice_procedure, move_to_experiment, experiment_procedure, end_experiment])
+ jsPsych.run([instructions, practice_procedure, move_to_experiment, experiment_procedure, end_experiment])
           
 
 </script>

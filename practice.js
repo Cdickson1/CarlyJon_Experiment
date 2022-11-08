@@ -9,7 +9,7 @@ var practice =
     },
     {
       "sentence": "You drop a bowling ball on a waffle",
-      "pic": "muffinS.jpeg",
+      "pic": "muffinN.jpeg",
       "correct": "N",
       "condition": "practice",
       "List": "practice"
@@ -23,7 +23,7 @@ var practice =
     },
     {
       "sentence": "You drop a bowling ball on a coffee mug",
-      "pic": "canN.jpeg",
+      "pic": "canS.jpeg",
       "correct": "N",
       "condition": "practice",
       "List": "practice"

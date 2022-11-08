@@ -21,13 +21,13 @@
     
     var subject_id = Math.floor(Math.random()*100000);
 
-    //var preload = {
-        //type: jsPsychPreload,
-        //images: imagelist,
-       // show_progress_bar: true,
-        //data: {
-        //typeoftrial: 'preload',
-        //subject: subject_id }};
+    var preload = {
+        type: jsPsychPreload,
+        images: imagelist,
+        show_progress_bar: true,
+        data: {
+        typeoftrial: 'preload',
+        subject: subject_id }};
     
 
     var fixation1 = {
@@ -129,7 +129,7 @@
             timeline_variables: teststimuli,
             randomize_order: true};
                 
- jsPsych.run([instructions, practice_procedure, move_to_experiment, experiment_procedure, end_experiment])
+ jsPsych.run([preload, instructions, practice_procedure, move_to_experiment, experiment_procedure, end_experiment])
           
 
 </script>

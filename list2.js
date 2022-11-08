@@ -16,7 +16,7 @@ var list2 =
     },
     {
       "sentence": "You drop a bowling ball on a playing card",
-      "pic": "playingcardN.jpeg",
+      "pic": "playingcardsN.jpeg",
       "correct": "Y",
       "condition": "Unsquashable_Normal",
       "List": 2
@@ -303,7 +303,7 @@ var list2 =
     },
     {
       "sentence": "You drop a bowling ball on a backpack",
-      "pic": "thermometer",
+      "pic": "thermometer.jpeg",
       "correct": "N",
       "condition": "filler",
       "List": 2

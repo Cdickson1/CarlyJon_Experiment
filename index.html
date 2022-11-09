@@ -7,6 +7,10 @@
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.1"></script>
     <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.1"></script>
     <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select@1.1.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-call-function@1.1.1"></script>
     <script src="list1.js"> </script>
     <script src="list2.js"> </script>
     <script src="practice.js"> </script>
@@ -88,10 +92,19 @@
         choices : "NO_KEYS",
         trial_duration: 2000}
 
-    var instructions = {
+        var instructions = {
         type: jsPsychHtmlKeyboardResponse,
-            stimulus: 'On each trial, you will be shown a sentence. Press the space bar to continue after comprehending the sentence. You will then be shown a picture of an object and will be asked to decide if the displayed object was mentioned in the sentence or not. Respond as quickly as possible by pressing S for yes and N for no.You will now do a practice session with feedback. Press any key to continue'
-            }
+            stimulus: `
+            <p style="font-size:20px;"> Welcome to the experiment! </p>
+            <p style="font-size:20px;"> In this experiment, you will be asked to make judgments about the content of different sentences.</p>
+            <p style="font-size:20px;"> On each trial, you will read a sentence, and will be shown a picture immediately following the sentence. </p>
+            <p style="font-size:20px;"> Your task is to decide whether the object displayed in the picture was mentioned in the sentence or not </p>
+            <p style="font-size:20px;"> and respond as quickly as possible by pressing <strong>Y</strong> for yes or <strong>N</strong> for no. </p>
+            <p style="font-size:20px;"> You will now do a practice session with feedback and instructions. </p>
+            <p style="font-size:20px;"> Press any key to continue.</p>`,
+        data: {
+        typeoftrial: 'instructions',
+        subject: subject_id}};
             
     var practice_procedure = {
         timeline: [fixation1, sentence, fixation2, picture, feedback],
@@ -124,12 +137,151 @@
     console.log("CONDITION=", CONDITION)
     console.log("teststimuli=", teststimuli)
                 
-    var experiment_procedure = {
+var experiment_procedure = {
             timeline: [fixation1, sentence, fixation2, picture],
             timeline_variables: teststimuli,
             randomize_order: true};
                 
- jsPsych.run([preload, instructions, practice_procedure, move_to_experiment, experiment_procedure, end_experiment])
+var demoinstructions = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+  <p style="font-size:20px;"> You have completed the experiment portion! </p>
+  <p style="font-size:20px;"> Before you are done, we would like you to answer some basic demographic questions. </p>
+  <p style="font-size:20px;"> Note that your answers to these questions will not affect your compensation/credit. </p>
+  <p style="font-size:20px;"> While some questions are required (*) to obtain some basic information about our recruitment sample <p>
+  <p style="font-size:20px;"> you can choose to skip other questions that you do not feel comfortable answering. </p>
+  <p style="font-size:20px;"> Press any key to continue.</p>
+  `,
+      data: {
+        typeoftrial: 'demo',
+        subject: subject_id
+      } }; 
+
+  var demo_1 = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'What is your age?', required: true, name: 'Age'},
+        {prompt: 'What is your gender?', required: true, name: 'Gender'},
+        {prompt: 'How many years of formal education have you had? (consider graduating high school to be 12 years)', 
+        required: true, name: 'Education'}
+      ],
+      button_label: 'Next',
+      data: {
+        typeoftrial: 'demo',
+        Experiment: jsPsych.timelineVariable('Experiment'),
+        subject: subject_id
+      }
+  };
+
+  var demo_2 = {
+type: jsPsychSurveyMultiSelect,
+questions: [
+  {
+    prompt: "Please select all the racial categories that apply to you:", 
+    options: ["American Indian/Alaskan Native","Asian", "Black/African American", 
+    "Native Hawaiian or Other Pacific Islander" , 
+      "White/Caucasian", "More than once race", "Other"], 
+    horizontal: false,
+    required: false,
+    name: 'Race'
+  }
+],
+data: {
+        typeoftrial: 'demo',
+        Experiment: jsPsych.timelineVariable('Experiment'),
+        subject: subject_id
+      }
+};
+
+  var demo_3 = {
+    type: jsPsychSurveyMultiChoice,
+    questions: [
+    {
+        prompt: "Are you of Hispanic, Latino/a/x or of Spanish origin?", 
+        name: 'Latino', 
+        options: ['Yes', 'No', 'Prefer not to respond'], 
+        required: false
+      }, 
+      {
+        prompt: "What is your dominant hand?", 
+        name: 'DominantHand', 
+        options: ['Left', 'Right', 'Ambidexterous'], 
+        required: false
+      }, 
+      {
+        prompt: "Please indicate what time of the day you feel most alert:", 
+        name: 'Alert', 
+        options: ['Morning', 'Afternoon', 'Evening', 'No Differences'], 
+        required: false
+      },
+    ],
+      data: {
+        typeoftrial: 'demo',
+        Experiment: jsPsych.timelineVariable('Experiment'),
+        subject: subject_id
+      }
+  };
+
+var english = {
+    type: jsPsychSurveyMultiChoice,
+    questions: [
+      {
+        prompt: "Is English your first language?", 
+        name: 'English', 
+        options: ['Yes', 'No'], 
+        required: true
+      },
+    ],
+      data: {
+        typeoftrial: 'english',
+        Experiment: jsPsych.timelineVariable('Experiment'),
+        subject: subject_id
+      }
+  };
+
+
+var not_english = {
+type: jsPsychSurveyText,
+preamble: "<p> You indicated that English is not your first language in the previous question. Please answer the following questions:</p> ",
+questions: [ {prompt: "What is your first language?"},
+{prompt: "At what age did you learn English?"} ],
+data: {
+        typeoftrial: 'notenglish',
+        Experiment: jsPsych.timelineVariable('Experiment'),
+        subject: subject_id
+      }
+}
+
+var not_english_loop = {
+timeline: [not_english],
+conditional_function: function() {
+var dat = jsPsych.data.getLastTrialData().values()[0];
+var answer = JSON.stringify(dat.response.English);
+answer = answer.replace(/\W/g, '')
+if(answer.localeCompare("No") == 0) {return true;} 
+else {return false;}
+}
+}
+
+var demo_5 = {
+type: jsPsychSurveyText,
+questions: [ {prompt: "Is there anything else we should know about, which might have affected your performance during the experiment? (e.g., lack of sleep, feeling ill etc.)"},
+],
+data: {
+        typeoftrial: 'demo',
+        Experiment: jsPsych.timelineVariable('Experiment'),
+        subject: subject_id
+      }
+}
+
+var demo_procedure = {
+    timeline: [demo_1, demo_2,demo_3, english, not_english_loop, demo_5]
+  }
+
+  
+var completion_code = '<strong>Your completion code is: ' + subject_id + ". Please copy-paste this code and submit it on Canvas.</strong>"
+
+jsPsych.run([preload, instructions, practice_procedure, move_to_experiment, demo_procedure, completion_code, end_experiment])
           
 
 </script>

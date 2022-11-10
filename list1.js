@@ -107,7 +107,7 @@ var list1 =
     },
     {
       "sentence": "You drop a bowling ball on an iPhone",
-      "pic": "iPhoneS.jpeg",
+      "pic": "iphoneS.jpeg",
       "correct": "Y",
       "condition": "Squashable_Smashed",
       "List": 1

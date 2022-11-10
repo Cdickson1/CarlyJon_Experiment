@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select@1.1.1"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.1"></script>
     <script src="https://unpkg.com/@jspsych/plugin-call-function@1.1.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
     <script src="list1.js"> </script>
     <script src="list2.js"> </script>
     <script src="practice.js"> </script>
@@ -20,8 +21,9 @@
 <link href="https://unpkg.com/jspsych@7.3.0/css/jspsych.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<script> var jsPsych = initJsPsych({
-        on_finish: function() {  jsPsych.data.displayData(); }});
+<script> 
+
+var jsPsych = initJsPsych();
     
     var subject_id = Math.floor(Math.random()*100000);
 
@@ -33,6 +35,21 @@
         typeoftrial: 'preload',
         subject: subject_id }};
     
+var ID = {
+ type: jsPsychSurveyText,
+ questions: [
+    {prompt: 'Enter your Prolific ID below:', required: true, name: 'ID'},
+  ],
+  button_label: 'Continue',
+  data: {
+    typeoftrial: 'ID',
+    Experiment: jsPsych.timelineVariable('Experiment'),
+    subject: subject_id
+  },
+  on_finish:function(data){
+    subject_id = data.response.ID
+  }
+}
 
     var fixation1 = {
         type: jsPsychHtmlKeyboardResponse,
@@ -51,7 +68,7 @@
         stimulus: jsPsych.timelineVariable('sentence'),
         choices: " ",
         data: {
-            typeoftrial: 'fixation',
+            typeoftrial: 'sentence',
             list_number: jsPsych.timelineVariable('List'),
             trialcondition: jsPsych.timelineVariable('condition'),
             subject: subject_id}}
@@ -72,9 +89,11 @@
     var picture = {
         type: jsPsychImageKeyboardResponse,
         stimulus: jsPsych.timelineVariable('pic'),
+        stimulus_height: 385,
+        stimulus_width: 385,
         choices: ['Y','N','y','n'],
         data: {
-            typeoftrial: 'fixation',
+            typeoftrial: 'picture',
             list_number: jsPsych.timelineVariable('List'),
             trialcondition: jsPsych.timelineVariable('condition'),
             subject: subject_id},
@@ -155,7 +174,8 @@ var demoinstructions = {
       data: {
         typeoftrial: 'demo',
         subject: subject_id
-      } }; 
+      } 
+  }; 
 
   var demo_1 = {
       type: jsPsychSurveyText,
@@ -171,24 +191,23 @@ var demoinstructions = {
         Experiment: jsPsych.timelineVariable('Experiment'),
         subject: subject_id
       }
-  };
+};
 
-  var demo_2 = {
-type: jsPsychSurveyMultiSelect,
-questions: [
-  {
+var demo_2 = {
+  type: jsPsychSurveyMultiSelect,
+  questions: [{
     prompt: "Please select all the racial categories that apply to you:", 
     options: ["American Indian/Alaskan Native","Asian", "Black/African American", 
-    "Native Hawaiian or Other Pacific Islander" , 
+      "Native Hawaiian or Other Pacific Islander" , 
       "White/Caucasian", "More than once race", "Other"], 
     horizontal: false,
     required: false,
     name: 'Race'
   }
-],
-data: {
-        typeoftrial: 'demo',
-        Experiment: jsPsych.timelineVariable('Experiment'),
+  ],
+  data: {
+    typeoftrial: 'demo',
+      Experiment: jsPsych.timelineVariable('Experiment'),
         subject: subject_id
       }
 };
@@ -275,13 +294,31 @@ data: {
 }
 
 var demo_procedure = {
-    timeline: [demo_1, demo_2,demo_3, english, not_english_loop, demo_5]
-  }
+    timeline: [demoinstructions, demo_1, demo_2,demo_3, english, not_english_loop, demo_5]
+}
 
-  
-var completion_code = '<strong>Your completion code is: ' + subject_id + ". Please copy-paste this code and submit it on Canvas.</strong>"
+var completion_code = "<strong>Your completion code is: C125M9LH. Please copy-paste this code and submit it on Canvas.</strong>"
 
-jsPsych.run([preload, instructions, practice_procedure, move_to_experiment, demo_procedure, completion_code, end_experiment])
+var end_experiment = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: 'Thank you for participating! Press any key to end the experiment.',
+        data: {
+            typeoftrial: 'sentence',
+            list_number: jsPsych.timelineVariable('List'),
+            trialcondition: jsPsych.timelineVariable('condition'),
+            subject: subject_id}
+}
+
+var end_experiment_prolific = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: function(){
+    var text = "<p>Thank you for participating! </p>" + completion_code + '<p>Click <a href="https://drive.google.com/file/d/1c70cdHFlc0AaR6RujLWLJwWkv1RbHQJY/view?usp=sharing" target="_blank" rel="noopener noreferrer">here</a> to access the debriefing form and know more about our research. <p> Please click the button below to finish the experiment and save your data.</p> <p> IMPORTANT: Please <strong>do not leave this page </strong> without clicking the button below.</p> <p> You may close the tab/window after you click the button below.';
+    return text;
+    }, 
+      choices: ['Finish and Save Data']
+};
+
+jsPsych.run([preload, /*ID,*/ instructions, practice_procedure, move_to_experiment, experiment_procedure, demo_procedure, end_experiment])
           
 
 </script>
